@@ -34,7 +34,7 @@ public class Alien {
 		alienDeath = false;
 	}
 
-	// Bewegt alien, veraendert aliendeath falls notwendig und veraendert missed
+	// Moves alien, changes alienDeath if alien hits ground and increases
 	// counter.
 	public void alienBehaviour() {
 
@@ -49,7 +49,7 @@ public class Alien {
 
 	}
 
-	// Loescht alien falls notwendig.
+	// if aliendeath true remove alien from arraylist
 	public static void alienDeathTime() {
 
 		for (Alien A : Gameprocess.Alienl) {
@@ -69,7 +69,7 @@ public class Alien {
 
 }
 
-// Teile von explosion.
+// Explosion parts
 
 class Part {
 
