@@ -48,7 +48,7 @@ public class Gameprocess extends JPanel implements Runnable {
 
 	public Thread game;
 
-	// Keylistener, initialisiert objekte und startet run() == SPIELVERLAUF.
+	// Keylistener, initializes objects und via game.start() starts run() and thus the game
 
 	public Gameprocess(ab f) {
 		this.setBackground(Color.BLACK);
@@ -84,51 +84,48 @@ public class Gameprocess extends JPanel implements Runnable {
 
 	}
 
-	// SPIELVERLAUF
+	// game process
 
 	public void run() {
 		while (running) {
 
-			// Bewegt character links/rechts.
+			// moves character left/right
 			character.movement();
 
-			// Bewegt alien, veraendert aliendeath falls noetig damit alien
-			// geloescht und
-			// zaehlt wieviel durch.
+			// moves alien, changes variable aliendeath if alien hits ground
+			// and increases missed counter
 			for (Alien A : Alienl) {
 				A.alienBehaviour();
 			}
 
-			// Bewegt projektil veraendert pdeath falls noetig damit alien
-			// geloescht.
+			// moves projectile changes pdeath if it hits alien or ceiling
 			for (Projectile P : projectilel) {
 				P.projectileBehaviour();
 			}
 
-			// Prueft spielzustand, endet falls noetig.
+			// checks for game state, ends it if missed>5
 			gameState();
 
-			// Prueft fuer kollision zwischen projektil und alien, veraendert
-			// variablen pdeath damit projektil geloescht, explosion damit alien
-			// nicht mehr angezeigt wird,
-			// initialisiert teile von explosion und gibt treffer aus.
+			// checks for collision between projectile and alien, changes state of projectile so that it 
+			// will be deleted, variable explosion so alien not shown anymore
+			// initializes parts of explosion and gives out destroyed nr of aliens
 			for (Alien A : Alienl) {
 				for (Projectile P : projectilel) {
 					checkCollision(A, P);
 				}
 			}
 
-			// Loescht alien falls noetig.
+			// delete alien if aliendeath true
 			Alien.alienDeathTime();
 
-			// Loescht projektil falls noetig.
+			// delete projectile if aliendeath true
 			Projectile.projectileDeath();
 
 			fpsSetter();
 
 			repaint();
 
-			// krieg ich nicht hin mit timer/timertask, fuegt aliens hinzu.
+			// adds aliens add set rate, bad implementation i know
 			if (timer % 45 == 0) {
 				Alien.alienAdd();
 			}
@@ -147,59 +144,58 @@ public class Gameprocess extends JPanel implements Runnable {
 
 			g.setColor(Color.WHITE);
 
-			// malt character
+			// draws character
 			g.fillRect(GCharacter.X, GCharacter.Y, GCharacter.Width,
 					GCharacter.Height);
 
-			// malt Aliens die nicht gerade explodieren
+			// draws aliens that are not exploding
 			for (Alien A : Alienl) {
 				if (!A.explosion) {
 					g.fillRect(A.posX, A.posY, Alien.Width, Alien.Height);
 				}
 			}
 
-			// malt projektil
+			// draws projectile
 			for (Projectile P : projectilel) {
 				g.fillRect(P.pX, P.pY, Projectile.pWidth, Projectile.pHeight);
 			}
 
-			// zeichnet explosion(en)
+			// draws parts (explosion)
 			for (Alien A : Alienl) {
 				if (A.explosion) {
 
-					// veraendert koordinaten von parts/teile von explosion
+					// moves parts of explosion
 					explosionTime(A);
 
 					g.setColor(Color.RED);
 
-					// Ohne das hier krieg ich ein (nicht fatalen) Error.
+					// without this an error occurs
 
 					if (A.part1 == null) {
 						IO.println("");
-					}
+					}	
 
-					// Komischerweise klappt es hiermit aber nicht!
+					// but doesnt work with this...
 					// (A.part1 == null) {
-					// System.out.print("");
+						// System.out.print("");
 					// }
-
-					// malt parts/teile von explosion
-					g.fillRect(A.part1.eX, A.part1.eY, Part.width, Part.height);
+				// draws parts of explosion
 					g.fillRect(A.part2.eX, A.part2.eY, Part.width, Part.height);
+					g.fillRect(A.part1.eX, A.part1.eY, Part.width, Part.height);
 					g.fillRect(A.part3.eX, A.part3.eY, Part.width, Part.height);
 					g.fillRect(A.part4.eX, A.part4.eY, Part.width, Part.height);
 
 				}
 			}
 
-			// malt sterne
+			// draws stars
 			g.setColor(Color.WHITE);
 			for (int j = 0; j < star.length; j++) {
 				g.fill3DRect(star[j].x, star[j].y, star[j].width,
 						star[j].height, true);
 			}
 
-			// malt boden
+			// draws floor
 			g.setColor(Color.GRAY);
 			g.fillRect(0, floor, Setup.width, Setup.height);
 
@@ -207,9 +203,9 @@ public class Gameprocess extends JPanel implements Runnable {
 
 	}
 
-	// FUNKTIONEN: ~~
+	// FUNCTIONS: ~
 
-	// Initialisiert objekte: charakter, alien und sterne.
+	// Initializes objects: character, alien and stars.
 	public void defineObjects() {
 		character = new GCharacter();
 
@@ -230,9 +226,9 @@ public class Gameprocess extends JPanel implements Runnable {
 		objectsDefined = true;
 	}
 
-	// Prueft fuer kollision zwischen projektil und alien, veraendert variablen
-	// pDeath damit projektil geloescht, explosion damit alien nicht mehr
-	// angezeigt wird, initialisiert teile von explosion und gibt counter aus.
+	// checks for collision between projectile and alien, changes state of projectile so that it 
+	// will be deleted, variable explosion so alien not shown anymore
+	// initializes parts of explosion and gives out destroyed nr of aliens
 
 	public void checkCollision(Alien alien, Projectile P) {
 		if (alien.posX < P.pX && alien.posX + Alien.Width > P.pX) {
@@ -260,10 +256,10 @@ public class Gameprocess extends JPanel implements Runnable {
 
 	}
 
-	// explosionsverlauf
+	// explosion process
 	public void explosionTime(Alien A) {
 
-		// falls explosionsteile intialisiert
+		
 		if (A.initialized) {
 			if (A.i <= 13) {
 				if (A.i % 1 == 0) {
@@ -286,7 +282,7 @@ public class Gameprocess extends JPanel implements Runnable {
 		}
 	}
 
-	// spielende ?
+	// game state
 	public void gameState() {
 		if (missed == 4) {
 			ab.panel.Text("You are about to lose Earth!");
@@ -297,7 +293,7 @@ public class Gameprocess extends JPanel implements Runnable {
 		}
 	}
 
-	// funktion fuer label
+	// function for label
 	public void Text(String text) {
 		this.removeAll();
 		label = new JLabel(text);
@@ -317,7 +313,7 @@ public class Gameprocess extends JPanel implements Runnable {
 		}
 	}
 
-	// funktion fuer zufaellige zahlen
+	// function for random number with range
 	public static int randomWithRange(int min, int max) {
 		Random random = new Random();
 		int range = (max - min) + 1;
