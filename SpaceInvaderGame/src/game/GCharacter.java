@@ -2,23 +2,23 @@ package game;
 
 public class GCharacter {
 
-	public static int Width = 10;
-	public static int Height = 40;
-	public static int movementSpeed = 6;
-	public static int X;
-	public static int Y;
+	public static final int G_WIDTH = 10;
+	public static final int G_HEIGHT = 40;
+	public static final int movementSpeed = 6;
+	public static int char_x;
+	public static int char_y;
 
 	public GCharacter() {
-		X = Setup.width / 2 - Width / 2;
-		Y = Gameprocess.floor - Height;
+		char_x = Setup.width / 2 - G_WIDTH / 2;
+		char_y = Gameprocess.FLOOR - G_HEIGHT;
 	}
 
 	public void movement() {
-		if (Gameprocess.right) {
-			X += movementSpeed;
+		if (Gameprocess.RIGHT) {
+			char_x += movementSpeed;
 		}
-		if (Gameprocess.left) {
-			X -= movementSpeed;
+		if (Gameprocess.LEFT) {
+			char_x -= movementSpeed;
 		}
 	}
 

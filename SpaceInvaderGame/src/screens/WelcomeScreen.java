@@ -13,52 +13,114 @@ import java.awt.event.WindowListener;
 
 import javax.swing.*;
 
-//STARTFENSTER
+//==========================================
 
+//STARTFENSTER
+@SuppressWarnings("serial")
 public class WelcomeScreen extends JFrame implements WindowListener,
 		ActionListener {
 
-	public static WelcomeScreen frame;
-
+	public static WelcomeScreen welScreen;
+	public AboutScreen A_Screen;
+	public ControlsScreen C_Screen;
+	public WelScreen W_Screen;
+	public JButton button1;
+	public JButton button2;
+	public JButton button3;
+	
+	
 	public static void main(String[] args) {
-		createAndShowGUI();
+		welScreen = new WelcomeScreen();
 	}
 
 	// konstrukteur von startfenster
-	public static void createAndShowGUI() {
-		frame = new WelcomeScreen("Welcome to SPACEINVADER");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(game.Setup.width, game.Setup.height);
-		frame.setLocationRelativeTo(null);
-		WScreen wscreen = new WScreen();
-		frame.add(wscreen);
-		frame.setVisible(true);
+	public WelcomeScreen() {
+		this("Welcome to SPACEINVADER");
+		
 	}
 
 	public WelcomeScreen(String title) {
 		super(title);
+		getContentPane().setBackground(Color.BLACK);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(game.Setup.width, game.Setup.height);
+		setLocationRelativeTo(null);
+		W_Screen = new WelScreen();
+		add(W_Screen);
+		createGUI();
+		setVisible(true);
 		addWindowListener(this);
+		A_Screen = new AboutScreen();
+		A_Screen.setVisible(false);
+		C_Screen = new ControlsScreen();
+		C_Screen.setVisible(false);
+		
 	}
+	
+	// ---------------------------------------------------
 
 	// ACTIONLISTENER
 	// wechselt zu einem anderem fenster
 
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == WScreen.button1) {
+		if (e.getSource() == button1) {
 			game.Setup setup = new game.Setup();
-			frame.setVisible(false);
+			setVisible(false);
 		}
-		if (e.getSource() == WScreen.button2) {
-			ControlsScreen controlscreen = new ControlsScreen();
-			frame.setVisible(false);
+		if (e.getSource() == button2) {
+			C_Screen.setVisible(true);
+			setVisible(false);
 		}
-		if (e.getSource() == WScreen.button3) {
-			AboutScreen aboutscreen = new AboutScreen();
-			frame.setVisible(false);
+		if (e.getSource() == button3) {
+			A_Screen.setVisible(true);
+			setVisible(false);
 		}
 
 	}
+	
+	// ---------------------------------------------------
+	
+	public void createGUI() {
+		
+		W_Screen.setBackground(Color.BLACK);
+		
+		JLabel label;
+		W_Screen.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 
+		label = new JLabel("SPACE INVADER");
+		label.setFont(new Font("Jokerman", Font.BOLD, 60));
+		label.setForeground(Color.RED);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weighty = 0.1;
+		W_Screen.add(label, c);
+
+		button1 = new JButton("Play");
+		c.gridx = 0;
+		c.gridy = 1;
+		c.weighty = 0.2;
+		button1.addActionListener(this);
+		W_Screen.add(button1, c);
+
+		button2 = new JButton("Controls");
+		c.gridx = 0;
+		c.gridy = 2;
+		c.weighty = 0.2;
+		W_Screen.add(button2, c);
+		button2.addActionListener(this);
+
+		button3 = new JButton("About");
+		c.gridx = 0;
+		c.gridy = 3;
+		c.weighty = 0.2;
+		button3.addActionListener(this);
+		W_Screen.add(button3, c);
+		
+	}
+
+	// ---------------------------------------------------
+	
 	// MISC
 	public void windowClosing(WindowEvent e) {
 		dispose();
@@ -85,91 +147,24 @@ public class WelcomeScreen extends JFrame implements WindowListener,
 
 }
 
-// USER INTERFACE
+//==========================================
 
-class WScreen extends JPanel implements Runnable {
-
-	public static JButton button1;
-	public static JButton button2;
-	public static JButton button3;
-
-	public Rectangle[] wstar;
-	public int wstars = 100;
-	public int wcurrentStarSize;
-	public boolean defStars;
-
-	public WScreen() {
-		this.setBackground(Color.BLACK);
-		defStars = false;
-		run();
-	}
-
-	public void run() {
-		defineStars();
-		JLabel label;
-		this.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-
-		label = new JLabel("SPACE INVADER");
-		label.setFont(new Font("Jokerman", Font.BOLD, 60));
-		label.setForeground(Color.RED);
-		c.gridx = 0;
-		c.gridy = 0;
-		c.weighty = 0.1;
-		this.add(label, c);
-
-		button1 = new JButton("Play");
-		c.gridx = 0;
-		c.gridy = 1;
-		c.weighty = 0.2;
-		button1.addActionListener(WelcomeScreen.frame);
-		this.add(button1, c);
-
-		button2 = new JButton("Controls");
-		c.gridx = 0;
-		c.gridy = 2;
-		c.weighty = 0.2;
-		this.add(button2, c);
-		button2.addActionListener(WelcomeScreen.frame);
-
-		button3 = new JButton("About");
-		c.gridx = 0;
-		c.gridy = 3;
-		c.weighty = 0.2;
-		button3.addActionListener(WelcomeScreen.frame);
-		this.add(button3, c);
-
-	}
-
-	// gibt stern array aus
-
+@SuppressWarnings("serial")
+class WelScreen extends JPanel {
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if (defStars) {
-			g.setColor(Color.WHITE);
+		
+		Rectangle[] v_star_m = screens.Util.create_stars(100);
+		
+		g.setColor(Color.WHITE);
 
-			for (int j = 0; j < wstar.length; j++) {
-				g.fill3DRect(wstar[j].x, wstar[j].y, wstar[j].width,
-						wstar[j].height, true);
-			}
-
-		}
+		for (int j = 0; j < v_star_m.length; j++) {
+			g.fill3DRect(v_star_m[j].x, v_star_m[j].y, v_star_m[j].width,
+					v_star_m[j].height, true);
+		}		
 
 	}
-
-	// erstellt zufaellige anordnung von sternen zufaelliger groesse
-
-	public void defineStars() {
-		wstar = new Rectangle[wstars];
-
-		for (int j = 0; j < wstar.length; j++) {
-			wcurrentStarSize = game.Gameprocess.randomWithRange(1, 4);
-			wstar[j] = new Rectangle(
-					game.Gameprocess.randomWithRange(0, game.Setup.width),
-					game.Gameprocess.randomWithRange(0, game.Setup.height),
-					wcurrentStarSize, wcurrentStarSize);
-		}
-		defStars = true;
-	}
-
+	
+	
 }

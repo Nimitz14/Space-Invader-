@@ -3,9 +3,10 @@ package game;
 
 
 public class Projectile {
-	public static int pWidth = 2;
-	public static int pHeight = 2;
-	public int pSpeed = 10;
+	public static final int pWidth = 2;
+	public static final int pHeight = 2;
+	public static final int pSpeed = 11;
+	public static int rel_counter = 11;
 	
 	
 	public int pX;
@@ -15,8 +16,8 @@ public class Projectile {
 
 	
 	public Projectile() {
-		this.pX = GCharacter.X + GCharacter.Width/2;
-		this.pY = GCharacter.Y + GCharacter.Height/2;
+		this.pX = GCharacter.char_x + GCharacter.G_WIDTH/2;
+		this.pY = GCharacter.char_y + GCharacter.G_HEIGHT/2;
 		this.pDeath = false;
 	}
 	
@@ -27,9 +28,9 @@ public class Projectile {
 		}
 		
 		if (!this.pDeath) {
-		this.pY -= pSpeed;
-			
+			this.pY -= pSpeed;
 		}
+		
 	}
 	
 	// zerstoert projektil falls pDeath 
@@ -44,6 +45,13 @@ public class Projectile {
 		}
 	}
 	
-	
+	public static boolean is_reloaded() {
+		if(rel_counter>10) {
+			rel_counter = 0;
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 }

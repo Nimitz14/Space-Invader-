@@ -1,15 +1,16 @@
 package game;
 
 import java.awt.*;
-import java.util.Timer;
+
+//import java.util.Timer;
 import java.util.ArrayList;
-import java.util.TimerTask;
+//import java.util.TimerTask;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 
-import java.util.Random;
+//import java.util.Random;
 
 @SuppressWarnings("serial")
 public class Gameprocess extends JPanel implements Runnable {
@@ -22,20 +23,20 @@ public class Gameprocess extends JPanel implements Runnable {
 	public static ArrayList<Alien> agraveList = new ArrayList<Alien>();
 
 	// GLOBAL VARIABLES
-	public static int buffer = 30;
-	public static int floor = 500;
-	public static int missed = 0;
-	public static boolean right = false;
-	public static boolean left = false;
-	public static boolean running = true;
+	public static final int BUFFER = 30;
+	public static final int FLOOR = 500;
+	public static int MISSED = 0;
+	public static boolean RIGHT = false;
+	public static boolean LEFT = false;
+	public static boolean RUNNING = true;
 	public static int counter = 0;
 	public static boolean gameover = false;
 	public static long timer = 0;
 
 	// MOVEMENT VARS AND MISC
 	public int keyUp = KeyEvent.VK_W;
-	public int keyLeft = KeyEvent.VK_A;
-	public int keyRight = KeyEvent.VK_D;
+	public int keyLEFT = KeyEvent.VK_A;
+	public int keyRIGHT = KeyEvent.VK_D;
 	public int keyFire = KeyEvent.VK_SPACE;
 	public boolean objectsDefined = false;
 
@@ -59,24 +60,26 @@ public class Gameprocess extends JPanel implements Runnable {
 
 		f.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == keyLeft) {
-					left = true;
+				if (e.getKeyCode() == keyLEFT) {
+					LEFT = true;
 				}
-				if (e.getKeyCode() == keyRight) {
-					right = true;
+				if (e.getKeyCode() == keyRIGHT) {
+					RIGHT = true;
 				}
 
 				if (e.getKeyCode() == keyFire) {
-					projectilel.add(new Projectile());
+					if(Projectile.is_reloaded()) {
+						projectilel.add(new Projectile());
+					}
 				}
 			}
 
 			public void keyReleased(KeyEvent e) {
-				if (e.getKeyCode() == keyLeft) {
-					left = false;
+				if (e.getKeyCode() == keyLEFT) {
+					LEFT = false;
 				}
-				if (e.getKeyCode() == keyRight) {
-					right = false;
+				if (e.getKeyCode() == keyRIGHT) {
+					RIGHT = false;
 				}
 
 			}
@@ -84,16 +87,18 @@ public class Gameprocess extends JPanel implements Runnable {
 
 	}
 
+	// -----------------------------------------------
+	
 	// game process
 
 	public void run() {
-		while (running) {
+		while (RUNNING) {
 
-			// moves character left/right
+			// moves character LEFT/RIGHT
 			character.movement();
 
 			// moves alien, changes variable aliendeath if alien hits ground
-			// and increases missed counter
+			// and increases MISSED counter
 			for (Alien A : Alienl) {
 				A.alienBehaviour();
 			}
@@ -103,7 +108,7 @@ public class Gameprocess extends JPanel implements Runnable {
 				P.projectileBehaviour();
 			}
 
-			// checks for game state, ends it if missed>5
+			// checks for game state, ends it if MISSED>5
 			gameState();
 
 			// checks for collision between projectile and alien, changes state of projectile so that it 
@@ -131,9 +136,12 @@ public class Gameprocess extends JPanel implements Runnable {
 			}
 
 			timer++;
+			Projectile.rel_counter +=1;
 
 		}
 	}
+	
+	// -----------------------------------------------
 
 	// MALT GRAFIK
 
@@ -145,13 +153,13 @@ public class Gameprocess extends JPanel implements Runnable {
 			g.setColor(Color.WHITE);
 
 			// draws character
-			g.fillRect(GCharacter.X, GCharacter.Y, GCharacter.Width,
-					GCharacter.Height);
+			g.fillRect(GCharacter.char_x, GCharacter.char_y, GCharacter.G_WIDTH,
+					GCharacter.G_HEIGHT);
 
 			// draws aliens that are not exploding
 			for (Alien A : Alienl) {
 				if (!A.explosion) {
-					g.fillRect(A.posX, A.posY, Alien.Width, Alien.Height);
+					g.fillRect(A.posX, A.posY, Alien.A_WIDTH, Alien.A_HEIGHT);
 				}
 			}
 
@@ -180,10 +188,10 @@ public class Gameprocess extends JPanel implements Runnable {
 						// System.out.print("");
 					// }
 				// draws parts of explosion
-					g.fillRect(A.part2.eX, A.part2.eY, Part.width, Part.height);
-					g.fillRect(A.part1.eX, A.part1.eY, Part.width, Part.height);
-					g.fillRect(A.part3.eX, A.part3.eY, Part.width, Part.height);
-					g.fillRect(A.part4.eX, A.part4.eY, Part.width, Part.height);
+					g.fillRect(A.part1.eX, A.part1.eY, Part.P_WIDTH, Part.P_HEIGHT);
+					g.fillRect(A.part2.eX, A.part2.eY, Part.P_WIDTH, Part.P_HEIGHT);
+					g.fillRect(A.part3.eX, A.part3.eY, Part.P_WIDTH, Part.P_HEIGHT);
+					g.fillRect(A.part4.eX, A.part4.eY, Part.P_WIDTH, Part.P_HEIGHT);
 
 				}
 			}
@@ -195,14 +203,16 @@ public class Gameprocess extends JPanel implements Runnable {
 						star[j].height, true);
 			}
 
-			// draws floor
+			// draws FLOOR
 			g.setColor(Color.GRAY);
-			g.fillRect(0, floor, Setup.width, Setup.height);
+			g.fillRect(0, FLOOR, Setup.width, Setup.height);
 
 		}
 
 	}
 
+	// -----------------------------------------------
+	
 	// FUNCTIONS: ~
 
 	// Initializes objects: character, alien and stars.
@@ -218,32 +228,35 @@ public class Gameprocess extends JPanel implements Runnable {
 		star = new Rectangle[stars];
 
 		for (int j = 0; j < star.length; j++) {
-			currentStarSize = randomWithRange(1, 4);
-			star[j] = new Rectangle(randomWithRange(0, Setup.width),
-					randomWithRange(0, floor), currentStarSize, currentStarSize);
+			currentStarSize = screens.Util.randomWithRange(1, 4);
+			star[j] = new Rectangle(screens.Util.randomWithRange(0, Setup.width),
+					screens.Util.randomWithRange(0, FLOOR), currentStarSize, currentStarSize);
 		}
 
 		objectsDefined = true;
 	}
 
+	
+	// -----------------------------------------------
+	
 	// checks for collision between projectile and alien, changes state of projectile so that it 
 	// will be deleted, variable explosion so alien not shown anymore
 	// initializes parts of explosion and gives out destroyed nr of aliens
-
+	
 	public void checkCollision(Alien alien, Projectile P) {
-		if (alien.posX < P.pX && alien.posX + Alien.Width > P.pX) {
+		if (alien.posX < P.pX && alien.posX + Alien.A_WIDTH > P.pX) {
 
-			if (alien.posY < P.pY && alien.posY + Alien.Width > P.pY) {
+			if (alien.posY < P.pY && alien.posY + Alien.A_WIDTH > P.pY) {
 				P.pDeath = true;
 				alien.explosion = true;
 
 				if (!alien.initialized) {
 					alien.part1 = new Part(alien.posX, alien.posY);
-					alien.part2 = new Part(alien.posX + Alien.Width, alien.posY);
+					alien.part2 = new Part(alien.posX + Alien.A_WIDTH, alien.posY);
 					alien.part3 = new Part(alien.posX, alien.posY
-							+ Alien.Height);
-					alien.part4 = new Part(alien.posX + Alien.Width, alien.posY
-							+ Alien.Height);
+							+ Alien.A_HEIGHT);
+					alien.part4 = new Part(alien.posX + Alien.A_WIDTH, alien.posY
+							+ Alien.A_HEIGHT);
 					alien.initialized = true;
 				}
 
@@ -256,6 +269,8 @@ public class Gameprocess extends JPanel implements Runnable {
 
 	}
 
+	// -----------------------------------------------
+	
 	// explosion process
 	public void explosionTime(Alien A) {
 
@@ -281,17 +296,21 @@ public class Gameprocess extends JPanel implements Runnable {
 			}
 		}
 	}
+	
+	// -----------------------------------------------
 
 	// game state
 	public void gameState() {
-		if (missed == 4) {
+		if (MISSED == 4) {
 			ab.panel.Text("You are about to lose Earth!");
 		}
-		if (missed >= 5) {
+		if (MISSED >= 5) {
 			ab.panel.Text("EARTH HAS BEEN DESTROYED!");
-			Gameprocess.running = false;
+			Gameprocess.RUNNING = false;
 		}
 	}
+	
+	// -----------------------------------------------
 
 	// function for label
 	public void Text(String text) {
@@ -302,21 +321,18 @@ public class Gameprocess extends JPanel implements Runnable {
 		this.add(label);
 		this.updateUI();
 	}
+	
+	// -----------------------------------------------
 
 	// FPS Setter
 	@SuppressWarnings("static-access")
 	public void fpsSetter() {
 		try {
-			game.sleep(buffer);
+			game.sleep(BUFFER);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	// function for random number with range
-	public static int randomWithRange(int min, int max) {
-		Random random = new Random();
-		int range = (max - min) + 1;
-		return random.nextInt(range) + min;
-	}
+	
 }

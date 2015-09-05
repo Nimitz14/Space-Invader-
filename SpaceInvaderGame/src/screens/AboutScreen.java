@@ -13,41 +13,91 @@ import java.awt.event.WindowListener;
 
 import javax.swing.*;
 
+// ==========================================
+
+@SuppressWarnings("serial")
 public class AboutScreen extends JFrame implements WindowListener,
 		ActionListener {
 
 	// VARS
-
-	public static AboutScreen aboutFrame;
-
-	// WELCOME SCREEN FRAME
+	public AbScreen AScreen;
+	public JButton button;
+	public boolean is_backg_done = false;
+	
 	public AboutScreen() {
-
-		aboutFrame = new AboutScreen("About SPACEINVADER");
-		aboutFrame.getContentPane().setBackground(Color.BLACK);
-		aboutFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		aboutFrame.setSize(game.Setup.width, game.Setup.height);
-		aboutFrame.setLocationRelativeTo(null);
-		AScreen AScreen = new AScreen();
-		aboutFrame.add(AScreen);
-		aboutFrame.setVisible(true);
-
+		this("About SPACEINVADER");
+		
 	}
 
 	public AboutScreen(String title) {
 		super(title);
+		getContentPane().setBackground(Color.BLACK);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(game.Setup.width, game.Setup.height);
+		setLocationRelativeTo(null);
+		AScreen = new AbScreen();
+		add(AScreen);
+		createGUI();
+		setVisible(true);
 		addWindowListener(this);
 	}
 
+	// ---------------------------------------------------
+	
 	// ACTIONLISTENER
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == AScreen.button) {
-			WelcomeScreen.createAndShowGUI();
-			aboutFrame.setVisible(false);
+		if (e.getSource() == button) {
+			WelcomeScreen.welScreen.setVisible(true);
+			setVisible(false);
 		}
 
 	}
+	
+	// ---------------------------------------------------
 
+	public void createGUI() {
+		
+		AScreen.setBackground(Color.BLACK);
+
+		JLabel label;
+		AScreen.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		label = new JLabel("About SPACEINVADER");
+		label.setFont(new Font("Berlin Sans FB", Font.BOLD, 50));
+		label.setForeground(Color.RED);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weighty = 0.45;
+		AScreen.add(label, c);
+
+		JLabel disclaimer = new JLabel(
+				"Created in 2015 by R.A. Braun, all rights reserved.");
+		disclaimer.setForeground(Color.WHITE);
+		c.gridx = 0;
+		c.gridy = 1;
+		c.weighty = 0.05;
+		AScreen.add(disclaimer, c);
+
+		JLabel email = new JLabel("rab014@googlemail.com");
+		email.setForeground(Color.WHITE);
+		c.gridx = 0;
+		c.gridy = 2;
+		c.weighty = 0.05;
+
+		AScreen.add(email, c);
+
+		button = new JButton("Back");
+		c.gridx = 0;
+		c.gridy = 3;
+		c.weighty = 0.45;
+		button.addActionListener(this);
+		AScreen.add(button, c);
+
+	}
+		
+	// ---------------------------------------------------
+	
 	// MISC
 	public void windowClosing(WindowEvent e) {
 		dispose();
@@ -74,92 +124,24 @@ public class AboutScreen extends JFrame implements WindowListener,
 
 }
 
-// USER INTERFACE
+// =======================================================
 
-class AScreen extends JPanel implements Runnable {
-
-	public static JButton button;
-
-	public Rectangle[] astar;
-	public int astars = 100;
-	public int acurrentStarSize;
-	public boolean adefStars;
-
-	public AScreen() {
-		this.setBackground(Color.BLACK);
-		adefStars = false;
-		run();
-	}
-
-	public void run() {
-		adefineStars();
-
-		JLabel label;
-		this.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-
-		label = new JLabel("About SPACEINVADER");
-		label.setFont(new Font("Berlin Sans FB", Font.BOLD, 50));
-		label.setForeground(Color.RED);
-		c.gridx = 0;
-		c.gridy = 0;
-		c.weighty = 0.45;
-		this.add(label, c);
-
-		JLabel disclaimer = new JLabel(
-				"Created in 2015 by R.A. Braun, all rights reserved.");
-		disclaimer.setForeground(Color.WHITE);
-		c.gridx = 0;
-		c.gridy = 1;
-		c.weighty = 0.05;
-		this.add(disclaimer, c);
-
-		JLabel email = new JLabel("rab014@googlemail.com");
-		email.setForeground(Color.WHITE);
-		c.gridx = 0;
-		c.gridy = 2;
-		c.weighty = 0.05;
-
-		this.add(email, c);
-
-		button = new JButton("Back");
-		c.gridx = 0;
-		c.gridy = 3;
-		c.weighty = 0.45;
-		button.addActionListener(AboutScreen.aboutFrame);
-		this.add(button, c);
-
-	}
-
-	// gibt stern array aus
-
+@SuppressWarnings("serial")
+class AbScreen extends JPanel {
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if (adefStars) {
-			g.setColor(Color.WHITE);
+		
+		Rectangle[] v_star_m = screens.Util.create_stars(100);
+		
+		g.setColor(Color.WHITE);
 
-			for (int j = 0; j < astar.length; j++) {
-				g.fill3DRect(astar[j].x, astar[j].y, astar[j].width,
-						astar[j].height, true);
-			}
-
-		}
+		for (int j = 0; j < v_star_m.length; j++) {
+			g.fill3DRect(v_star_m[j].x, v_star_m[j].y, v_star_m[j].width,
+					v_star_m[j].height, true);
+		}		
 
 	}
-
-	// erstellt zufaellige anordnung von sternen zufaelliger groesse
-
-	public void adefineStars() {
-		astar = new Rectangle[astars];
-
-		for (int j = 0; j < astar.length; j++) {
-			acurrentStarSize = game.Gameprocess.randomWithRange(1, 4);
-			astar[j] = new Rectangle(
-					game.Gameprocess.randomWithRange(0, game.Setup.width),
-					game.Gameprocess.randomWithRange(0, game.Setup.height),
-					acurrentStarSize, acurrentStarSize);
-		}
-		adefStars = true;
-	}
-
+	
+	
 }

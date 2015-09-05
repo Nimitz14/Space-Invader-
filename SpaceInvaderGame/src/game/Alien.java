@@ -1,8 +1,8 @@
 package game;
 
 public class Alien {
-	public static int Width = 15;
-	public static int Height = 30;
+	public static final int A_WIDTH = 15;
+	public static final int A_HEIGHT = 30;
 	// public static long Frequency = 10000;
 
 	public boolean explosion;
@@ -27,9 +27,9 @@ public class Alien {
 	Part part4;
 
 	public Alien() {
-		this.posX = Gameprocess.randomWithRange(0, 750) + Alien.Width;
+		this.posX = screens.Util.randomWithRange(0, 750) + Alien.A_WIDTH;
 		this.posY = 0;
-		this.aSpeed = Gameprocess.randomWithRange(minSpeed, maxSpeed);
+		this.aSpeed = screens.Util.randomWithRange(minSpeed, maxSpeed);
 		i = 0;
 		alienDeath = false;
 	}
@@ -42,9 +42,9 @@ public class Alien {
 			this.posY += this.aSpeed;
 		}
 
-		if (this.posY >= Gameprocess.floor) {
+		if (this.posY >= Gameprocess.FLOOR) {
 			this.alienDeath = true;
-			Gameprocess.missed++;
+			Gameprocess.MISSED++;
 		}
 
 	}
@@ -73,9 +73,9 @@ public class Alien {
 
 class Part {
 
-	public static int width = Alien.Width / 2;
-	public static int height = Alien.Height / 2;
-	public static int eSpeed = 5;
+	public static final int P_WIDTH = Alien.A_WIDTH / 2;
+	public static final int P_HEIGHT = Alien.A_HEIGHT / 2;
+	public static final int eSpeed = 5;
 
 	public int eX;
 	public int eY;
