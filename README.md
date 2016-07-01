@@ -8,4 +8,4 @@ Note: IO-Class is note created by me (see file for author).
 
 [Controls screen.](http://i.imgur.com/hq3Uk1b.png)
 
-[Game in progress.](http://i.imgur.com/37FeJJp.png)
+[Game in progress.](http://i.imgur.com/QWEbVT0.png)
