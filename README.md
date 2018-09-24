@@ -1,6 +1,6 @@
 # Space-Invader-
 
-My first ever programming project!
+My first ever programming project (done in 2013 I think)!
 
 Very basic Space Invader game, rectangles as "graphics".
 
